@@ -14,3 +14,5 @@
 /.vs*
 
 /neo/CMakeSettings.json
+.cache/clangd/index
+compile_commands.json
