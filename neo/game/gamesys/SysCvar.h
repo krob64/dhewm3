@@ -222,6 +222,11 @@ extern idCVar g_mpWeaponAngleScale;
 
 extern idCVar ai_showHealth;
 
+// kolega cvars
+extern idCVar k_showspeed;
+extern idCVar k_soulcubevisuals;
+extern idCVar k_soulcubespeed;
+
 extern idCVar g_testParticle;
 extern idCVar g_testParticleName;
 

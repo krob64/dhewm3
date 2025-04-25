@@ -33,6 +33,7 @@ terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite
 */
 
 #include "framework/BuildVersion.h"
+#include "framework/CVarSystem.h"
 #include "framework/Licensee.h"
 #include "sys/platform.h"
 
@@ -407,7 +408,20 @@ idCVar ai_showHealth("ai_showHealth",
                      "0",
                      CVAR_GAME | CVAR_BOOL,
                      "Draws the AI's health above its head");
-
+// kolega cvars
+idCVar k_showspeed("k_showspeed",
+                   "0",
+                   CVAR_GAME | CVAR_BOOL,
+                   "Draws the speed of the player to the screen");
+idCVar k_soulcubevisuals(
+    "k_soulcubevisuals",
+    "0",
+    CVAR_GAME | CVAR_BOOL,
+    "Draws a bounding box of the soulcube enemy and draws the path");
+idCVar k_soulcubespeed("k_soulcubespeed",
+                       "0",
+                       CVAR_GAME | CVAR_FLOAT,
+                       "Sets the speed of the soulcube [0 - 1]");
 idCVar g_dvTime("g_dvTime", "1", CVAR_GAME | CVAR_FLOAT, "");
 idCVar g_dvAmplitude("g_dvAmplitude", "0.001", CVAR_GAME | CVAR_FLOAT, "");
 idCVar g_dvFrequency("g_dvFrequency", "0.5", CVAR_GAME | CVAR_FLOAT, "");

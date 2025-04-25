@@ -40,6 +40,7 @@ terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite
 #include "game/Player.h"
 #include "gamesys/SysCvar.h"
 #include "idlib/Lib.h"
+#include "renderer/Model.h"
 #include "script/Script_Thread.h"
 #include "sys/platform.h"
 
@@ -2243,7 +2244,6 @@ calls Damage()
 ============
 */
 
-static float alpha = 1.0f;
 void idActor::Damage(idEntity* inflictor,
                      idEntity* attacker,
                      const idVec3& dir,
@@ -2279,12 +2279,19 @@ void idActor::Damage(idEntity* inflictor,
         health -= damage;
 
         if (g_debugDamage.GetBool()) {
-            idVec3 above_head(0, 0, 20);
+            idVec3 enemy_eyepos = static_cast<idActor*>(this)->GetEyePosition();
+            idVec3 above_head(30, 0, 20);
+            auto local_viewmatrix =
+                gameLocal.GetLocalPlayer()->viewAngles.ToMat3();
+            gameRenderWorld->DrawText(va("%d", damage),
+                                      enemy_eyepos + above_head, 0.4f,
+                                      colorWhite, local_viewmatrix, 1, 2000);
+
+            idVec3 center_left(-30, 0, -20);
             gameRenderWorld->DrawText(
-                va("%d", damage),
-                static_cast<idActor*>(this)->GetEyePosition() + above_head,
-                0.25, colorWhite,
-                gameLocal.GetLocalPlayer()->viewAngles.ToMat3(), 1, 2000);
+                va("%s", animator.GetJointName((jointHandle_t)location)),
+                enemy_eyepos + center_left, 0.4f, colorPink, local_viewmatrix,
+                1, 2000);
         }
 
         if (health <= 0) {
@@ -2404,8 +2411,6 @@ bool idActor::Pain(idEntity* inflictor,
         gameLocal.Printf("Damage: joint: '%s', zone '%s', anim '%s'\n",
                          animator.GetJointName((jointHandle_t)location),
                          damageGroup.c_str(), painAnim.c_str());
-        gameLocal.Printf("hey i dealt %d damage to this area %s", damage,
-                         damageGroup.c_str());
     }
 
     return true;

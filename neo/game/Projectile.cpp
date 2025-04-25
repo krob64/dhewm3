@@ -1647,9 +1647,10 @@ void idSoulCubeMissile::KillTarget(const idVec3& dir) {
             (ownerEnt->health > 0) && !act->spawnArgs.GetBool("boss")) {
             static_cast<idPlayer*>(ownerEnt)->GiveHealthPool(act->health);
         }
-        gameRenderWorld->DebugLine(colorYellow, this->GetPhysics()->GetOrigin(),
-                                   enemy.GetEntity()->GetPhysics()->GetOrigin(),
-                                   5000);
+        // gameRenderWorld->DebugLine(colorYellow,
+        // this->GetPhysics()->GetOrigin(),
+        //                            enemy.GetEntity()->GetPhysics()->GetOrigin(),
+        //                            5000);
         act->Damage(this, owner.GetEntity(), dir,
                     spawnArgs.GetString("def_damage"), 1.0f, INVALID_JOINT);
         act->GetAFPhysics()->SetTimeScale(0.25);
@@ -1684,7 +1685,7 @@ void idSoulCubeMissile::Think(void) {
                 speed = (startingVelocity +
                          (startingVelocity + endingVelocity) * pct)
                             .Length() *
-                        0.1;
+                        k_soulcubespeed.GetFloat();
             }
         }
         idGuidedProjectile::Think();
@@ -1720,9 +1721,10 @@ void idSoulCubeMissile::GetSeekPos(idVec3& out) {
         owner.GetEntity()->IsType(idActor::Type)) {
         idActor* act = static_cast<idActor*>(owner.GetEntity());
         out = act->GetEyePosition();
-        gameRenderWorld->DebugBounds(
-            colorGreen, act->GetPhysics()->GetAbsBounds(), vec3_zero, 1);
-
+        if (k_soulcubevisuals.GetBool()) {
+            gameRenderWorld->DebugBounds(
+                colorGreen, act->GetPhysics()->GetAbsBounds(), vec3_zero, 1);
+        }
         return;
     }
     if (destOrg != vec3_zero) {
@@ -1730,19 +1732,18 @@ void idSoulCubeMissile::GetSeekPos(idVec3& out) {
         return;
     }
 
-    auto peekerpos = this->GetPhysics()->GetOrigin();
-    auto enemypos = static_cast<idActor*>(enemy.GetEntity())->GetEyePosition();
-    enemypos.z -= 12.0f;
-    gameRenderWorld->DebugLine(colorOrange, peekerpos, enemypos, 1);
+    if (k_soulcubevisuals.GetBool()) {
+        auto peekerpos = this->GetPhysics()->GetOrigin();
+        auto enemypos =
+            static_cast<idActor*>(enemy.GetEntity())->GetEyePosition();
+        enemypos.z -= 12.0f;
+        gameRenderWorld->DebugLine(colorOrange, peekerpos, enemypos, 1);
 
-    gameRenderWorld->DebugBounds(
-        colorRed, enemy.GetEntity()->GetPhysics()->GetAbsBounds(), vec3_zero,
-        1);
+        gameRenderWorld->DebugBounds(
+            colorRed, enemy.GetEntity()->GetPhysics()->GetAbsBounds(),
+            vec3_zero, 1);
+    }
 
-    gameLocal.Printf("peeker position: x: %f y: %f z: %f\n", peekerpos.x,
-                     peekerpos.y, peekerpos.z);
-    gameLocal.Printf("enemy position: x: %f y: %f z: %f\n", enemypos.x,
-                     enemypos.y, enemypos.z);
     idGuidedProjectile::GetSeekPos(out);
 }
 
