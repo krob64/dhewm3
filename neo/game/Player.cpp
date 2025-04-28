@@ -2748,6 +2748,7 @@ void idPlayer::DrawHUD(idUserInterface* _hud) {
 
     if (k_showspeed.GetBool()) {
         idVec3 player_velocity = this->GetPhysics()->GetLinearVelocity();
+        player_velocity.z = 0.0f;
         float player_speed = player_velocity.Length();
         idStr speed_text = va("%.0f ups", player_speed);
 
