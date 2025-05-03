@@ -230,15 +230,18 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime,
         //     gameLocal.GetLocalPlayer()->viewAngles.ToMat3(), 1, 2000);
         //
         //
-        if (k_showimpacts.GetBool()) {
+        int impacts = k_showimpacts.GetInteger();
+        if (impacts > 0) {
             idVec3 mins(-5, -5, -5);
-            idVec3 max(5, 5, 5);
-            idBounds bullet_impact(mins, max);
+            idVec3 maxs(5, 5, 5);
+            idBounds bullet_impact(mins, maxs);
             gameRenderWorld->DebugBounds(colorYellow, bullet_impact,
                                          collision.endpos, 2000);
-            gameRenderWorld->DebugLine(
-                colorYellow, gameLocal.GetLocalPlayer()->GetEyePosition(),
-                collision.endpos, 2000);
+            if (impacts > 1) {
+                gameRenderWorld->DebugLine(
+                    colorYellow, gameLocal.GetLocalPlayer()->GetEyePosition(),
+                    collision.endpos, 2000);
+            }
         }
         collided = true;
     }

@@ -424,8 +424,8 @@ idCVar k_soulcubespeed("k_soulcubespeed",
                        "Sets the speed of the soulcube [0 - 1]");
 idCVar k_showimpacts("k_showimpacts",
                      "0",
-                     CVAR_GAME | CVAR_BOOL,
-                     "shows impacts of bullets");
+                     CVAR_GAME | CVAR_INTEGER,
+                     "shows impacts of bullets [1] and optionally tracers [2]");
 idCVar k_ruler("k_ruler",
                "1",
                CVAR_GAME | CVAR_BOOL,
