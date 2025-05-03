@@ -32,7 +32,9 @@ terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite
 ===========================================================================
 */
 
+#include "GameBase.h"
 #include "Game_local.h"
+#include "d3xp/Game_local.h"
 #include "framework/DeclEntityDef.h"
 #include "framework/DeclManager.h"
 #include "framework/async/NetworkSystem.h"
@@ -2746,15 +2748,23 @@ void idPlayer::DrawHUD(idUserInterface* _hud) {
 
     _hud->Redraw(gameLocal.realClientTime);
 
+    const idMaterial* fontMaterial =
+        declManager->FindMaterial("textures/bigchars");
+
     if (k_showspeed.GetBool()) {
         idVec3 player_velocity = this->GetPhysics()->GetLinearVelocity();
         player_velocity.z = 0.0f;
         float player_speed = player_velocity.Length();
         idStr speed_text = va("%.0f ups", player_speed);
 
-        const idMaterial* fontMaterial =
-            declManager->FindMaterial("textures/bigchars");
         renderSystem->DrawSmallStringExt(150, 445, speed_text.c_str(),
+                                         colorWhite, true, fontMaterial);
+    }
+
+    if (k_ruler.GetBool()) {
+        idStr ruler_string =
+            va("distance: %.0f %.0f", ruler_distance, ruler_beeline_distance);
+        renderSystem->DrawSmallStringExt(150, 430, ruler_string.c_str(),
                                          colorWhite, true, fontMaterial);
     }
 
@@ -6734,25 +6744,19 @@ void idPlayer::Think(void) {
     if (g_showEnemies.GetBool()) {
         idActor* ent;
         int num = 0;
+        idBounds entbounds;
         for (ent = enemyList.Next(); ent != NULL; ent = ent->enemyNode.Next()) {
+            entbounds = ent->GetPhysics()->GetBounds().Expand(2);
             gameLocal.Printf("enemy (%d)'%s'\n", ent->entityNumber,
                              ent->name.c_str());
-            gameRenderWorld->DebugBounds(
-                colorRed, ent->GetPhysics()->GetBounds().Expand(2),
-                ent->GetPhysics()->GetOrigin());
+            gameRenderWorld->DebugBounds(colorRed, entbounds,
+                                         ent->GetPhysics()->GetOrigin());
             num++;
         }
         gameLocal.Printf("%d: enemies\n", num);
     }
 
-    // idVec3 velocity = this->GetPhysics()->GetLinearVelocity();
-    // float player_speed = velocity.Length();
-    //
-    // idVec3 eyepos = this->GetEyePosition();
-    // eyepos.y += 100;
-    //
-    // gameRenderWorld->DrawText(va("%.0f", player_speed), eyepos, 1.0f,
-    //                           colorWhite, this->viewAngles.ToMat3());
+    traceray();
 }
 
 /*
@@ -8978,4 +8982,34 @@ bool idPlayer::NeedsIcon(void) {
     // local clients don't render their own icons... they're only info for other
     // clients
     return entityNumber != gameLocal.localClientNum && (isLagged || isChatting);
+}
+
+//
+// KOLEGA PLAYER FUNCTIONS
+//
+
+void idPlayer::traceray() {
+    idVec3 eye_pos = GetEyePosition();
+    idVec3 view_dir = renderView->viewaxis[0];
+
+    float max_distance = 10000.0f;
+    idVec3 end_pos = eye_pos + view_dir * max_distance;
+
+    // gameRenderWorld->DebugLine(colorPink, eye_pos, end_pos, 2000);
+
+    trace_t trace_result = {0};
+    int trace_mask = MASK_SHOT_BOUNDINGBOX;
+
+    gameLocal.clip.TracePoint(trace_result, eye_pos, end_pos, trace_mask, this);
+
+    if (trace_result.fraction < 1.0f) {
+        ruler_distance = (trace_result.endpos - eye_pos).Length();
+        // gameRenderWorld->DebugLine(colorGreen, eye_pos, trace_result.endpos,
+        //                            2000);
+        trace_result.endpos.z = eye_pos.z;
+        ruler_beeline_distance = (trace_result.endpos - eye_pos).Length();
+    } else {
+        ruler_distance = -1.0f;
+        ruler_beeline_distance = -1.0f;
+    }
 }

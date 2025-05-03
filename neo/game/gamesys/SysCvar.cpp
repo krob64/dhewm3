@@ -410,7 +410,7 @@ idCVar ai_showHealth("ai_showHealth",
                      "Draws the AI's health above its head");
 // kolega cvars
 idCVar k_showspeed("k_showspeed",
-                   "0",
+                   "1",
                    CVAR_GAME | CVAR_BOOL,
                    "Draws the speed of the player to the screen");
 idCVar k_soulcubevisuals(
@@ -419,9 +419,26 @@ idCVar k_soulcubevisuals(
     CVAR_GAME | CVAR_BOOL,
     "Draws a bounding box of the soulcube enemy and draws the path");
 idCVar k_soulcubespeed("k_soulcubespeed",
-                       "0",
+                       "1",
                        CVAR_GAME | CVAR_FLOAT,
                        "Sets the speed of the soulcube [0 - 1]");
+idCVar k_showimpacts("k_showimpacts",
+                     "0",
+                     CVAR_GAME | CVAR_BOOL,
+                     "shows impacts of bullets");
+idCVar k_ruler("k_ruler",
+               "1",
+               CVAR_GAME | CVAR_BOOL,
+               "shows distance of object in crosshair");
+idCVar k_ai_showdistance("k_ai_showdistance",
+                         "0",
+                         CVAR_GAME | CVAR_BOOL,
+                         "show distance to actors");
+idCVar k_showprojectilebounds("k_showprojectilebounds",
+                              "0",
+                              CVAR_GAME | CVAR_BOOL,
+                              "draws bounds of projectiles");
+
 idCVar g_dvTime("g_dvTime", "1", CVAR_GAME | CVAR_FLOAT, "");
 idCVar g_dvAmplitude("g_dvAmplitude", "0.001", CVAR_GAME | CVAR_FLOAT, "");
 idCVar g_dvFrequency("g_dvFrequency", "0.5", CVAR_GAME | CVAR_FLOAT, "");

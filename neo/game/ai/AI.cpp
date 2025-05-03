@@ -32,6 +32,8 @@ terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite
 ===========================================================================
 */
 
+#include "Game_local.h"
+#include "idlib/Lib.h"
 #include "idlib/math/Quat.h"
 #include "sys/platform.h"
 
@@ -1188,11 +1190,29 @@ void idAI::Think(void) {
     UpdateDamageEffects();
     LinkCombat();
 
+    idPlayer* local_player = gameLocal.GetLocalPlayer();
+
     if (ai_showHealth.GetBool()) {
         idVec3 aboveHead(0, 0, 20);
         gameRenderWorld->DrawText(
             va("%d", (int)health), this->GetEyePosition() + aboveHead, 0.5f,
-            colorWhite, gameLocal.GetLocalPlayer()->viewAngles.ToMat3());
+            colorWhite, local_player->viewAngles.ToMat3());
+    }
+
+    // k_ai_showdistance
+    if (k_ai_showdistance.GetBool() && health > 1) {
+        idVec3 entity_pos = physicsObj.GetOrigin();
+
+        float distance =
+            (entity_pos - local_player->GetPhysics()->GetOrigin()).Length();
+
+        idVec3 right_from_center(-50, 0, 0);
+        gameRenderWorld->DrawText(va("%.0f"
+                                     "u",
+                                     distance),
+                                  GetEyePosition() + right_from_center, .5f,
+                                  colorWhite,
+                                  local_player->viewAngles.ToMat3());
     }
 }
 

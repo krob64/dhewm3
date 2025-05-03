@@ -226,6 +226,10 @@ extern idCVar ai_showHealth;
 extern idCVar k_showspeed;
 extern idCVar k_soulcubevisuals;
 extern idCVar k_soulcubespeed;
+extern idCVar k_showimpacts;
+extern idCVar k_ruler;
+extern idCVar k_ai_showdistance;
+extern idCVar k_showprojectilebounds;
 
 extern idCVar g_testParticle;
 extern idCVar g_testParticleName;

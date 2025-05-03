@@ -508,6 +508,11 @@ void idProjectile::Think(void) {
             lightDefHandle = gameRenderWorld->AddLightDef(&renderLight);
         }
     }
+
+    if (k_showprojectilebounds.GetBool()) {
+        gameRenderWorld->DebugBounds(colorMagenta, physicsObj.GetBounds(),
+                                     physicsObj.GetOrigin());
+    }
 }
 
 /*
@@ -1516,7 +1521,15 @@ void idGuidedProjectile::Launch(const idVec3& start,
             trace_t tr;
             idPlayer* player = static_cast<idPlayer*>(owner.GetEntity());
             idVec3 start = player->GetEyePosition();
+
+            // potentially a bug. players viewaxis does not change pitch,
+            // therefore enemies you aim at below/above will never get hit by
+            // the trace
+            // fixable by using the cameras viewaxes instead:
+            // idVec3 end = start + player->GetRenderView()->viewaxis[0] *
+            // 1000.0f;
             idVec3 end = start + player->viewAxis[0] * 1000.0f;
+            gameRenderWorld->DebugLine(colorRed, start, end, 5000);
             gameLocal.clip.TracePoint(tr, start, end,
                                       MASK_SHOT_RENDERMODEL | CONTENTS_BODY,
                                       owner.GetEntity());
@@ -1722,8 +1735,10 @@ void idSoulCubeMissile::GetSeekPos(idVec3& out) {
         idActor* act = static_cast<idActor*>(owner.GetEntity());
         out = act->GetEyePosition();
         if (k_soulcubevisuals.GetBool()) {
-            gameRenderWorld->DebugBounds(
-                colorGreen, act->GetPhysics()->GetAbsBounds(), vec3_zero, 1);
+            // gameRenderWorld->DebugBounds(
+            //     colorGreen, act->GetPhysics()->GetAbsBounds(), vec3_zero, 1);
+            gameRenderWorld->DebugLine(colorBlue, physicsObj.GetOrigin(),
+                                       act->GetPhysics()->GetOrigin());
         }
         return;
     }
